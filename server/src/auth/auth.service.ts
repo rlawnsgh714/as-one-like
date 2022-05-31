@@ -92,10 +92,10 @@ export class AuthService {
     }
 
     const token: string = await this.tokenService.generateAccessToken(
-      result.data.uniqueId,
+      userData.uniqueId,
     );
     const refreshToken: string = await this.tokenService.generateRefreshToken(
-      result.data.id,
+      userData.uniqueId,
     );
     if (validationData(token) || validationData(refreshToken)) {
       throw new ForbiddenException('토큰이 발급되지 않았습니다');

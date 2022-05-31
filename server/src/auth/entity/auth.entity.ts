@@ -1,12 +1,5 @@
 import User from 'src/user/entity/user.entity';
-import {
-  Column,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  OneToOne,
-  PrimaryColumn,
-} from 'typeorm';
+import { Column, Entity, OneToOne, PrimaryColumn } from 'typeorm';
 
 @Entity('auth')
 export default class Auth {

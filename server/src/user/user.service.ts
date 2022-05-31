@@ -23,29 +23,28 @@ export class UserService {
     return userData;
   }
 
-  async addUser(id: string, joinDto: JoinDto): Promise<void> {
+  async addUser(user: User, joinDto: JoinDto): Promise<void> {
     const checkUser: User = await this.userRepository.getUserById(joinDto.id);
-    console.log(checkUser);
     if (validationData(checkUser) === false) {
       throw new UnauthorizedException('이미 존재하는 아이디입니다');
     }
     await this.userRepository.save({
       ...joinDto,
-      fk_auth_id: id,
+      auth: user,
     });
   }
 
-  async modifyUser(id: string, userDto: UserDto): Promise<void> {
-    const checkUser: User = await this.userRepository.getFkAuthById(id);
-    if (validationData(checkUser) === false) {
+  async modifyUser(user: User, userDto: UserDto): Promise<void> {
+    const checkUser: User = await this.userRepository.getFkAuthById(user.id);
+    if (validationData(checkUser)) {
       throw new NotFoundException('해당 회원은 존재하지 않습니다');
     }
     const userData: User = await this.userRepository.merge(checkUser, userDto);
     await this.userRepository.save(userData);
   }
 
-  async deleteUser(id: string): Promise<void> {
-    const checkUser: User = await this.userRepository.getUserById(id);
+  async deleteUser(user: User): Promise<void> {
+    const checkUser: User = await this.userRepository.getFkAuthById(user.id);
     if (validationData(checkUser)) {
       throw new NotFoundException('해당 회원은 존재하지 않습니다');
     }

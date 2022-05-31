@@ -40,24 +40,24 @@ export class UserController {
     @Token() user: User,
     @Body() joinDto: JoinDto,
   ): Promise<BaseResponse<User>> {
-    await this.userService.addUser(user.id, joinDto);
+    await this.userService.addUser(user, joinDto);
     return response.successResponse('유저 추가 성공');
   }
 
   @UseGuards(TokenGuard)
-  @Put('/:id')
+  @Put('/')
   async modifyUser(
-    @Token() user: Auth,
+    @Token() user: User,
     @Body() userDto: UserDto,
   ): Promise<BaseResponse<User>> {
-    await this.userService.modifyUser(user.id, userDto);
+    await this.userService.modifyUser(user, userDto);
     return response.successResponse('해당 아이디에 맞는 회원 정보 수정 성공');
   }
 
   @UseGuards(TokenGuard)
-  @Delete('/:id')
-  async deleteUser(@Param('id') id: string): Promise<BaseResponse<User>> {
-    await this.userService.deleteUser(id);
+  @Delete('/')
+  async deleteUser(@Token() user: User): Promise<BaseResponse<User>> {
+    await this.userService.deleteUser(user);
     return response.successResponse('해당 아이디에 맞는 회원 정보 삭제 성공');
   }
 }

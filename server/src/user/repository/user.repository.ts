@@ -13,7 +13,8 @@ export class UserRepository extends Repository<User> {
 
   public getFkAuthById(id: string): Promise<User> {
     return this.createQueryBuilder('user')
-      .where('fk_auth_id = :id', { id })
+      .leftJoinAndSelect('user.auth', 'auth')
+      .where('auth.id = :id', { id })
       .getOne();
   }
 }
