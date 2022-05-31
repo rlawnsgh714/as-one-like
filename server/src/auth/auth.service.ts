@@ -7,6 +7,7 @@ import { ConfigService } from '@nestjs/config';
 import axios, { AxiosResponse } from 'axios';
 import { validationData } from 'src/global/utils/validationData.util';
 import { TokenService } from 'src/token/token.service';
+import User from 'src/user/entity/user.entity';
 import CodeLogin from './dto/codeLogin';
 import Auth from './entity/auth.entity';
 import { ILoginData } from './interface/loginData';
@@ -45,7 +46,7 @@ export class AuthService {
         redirectUrl: redirectUrl,
       },
     );
-    const code = res.data.data.location.split('=')[1].split('&')[0];
+    const code: string = res.data.data.location.split('=')[1].split('&')[0];
     return code;
   }
 
@@ -77,25 +78,27 @@ export class AuthService {
       },
     );
 
-    const userData = result.data.data;
+    const userData: User = result.data.data;
 
-    let user: Auth = await this.authRepository.findAuthById(userData.uniqueId);
+    let user: Auth = await this.authRepository.findAuthById(
+      result.data.data.uniqueId,
+    );
 
     if (validationData(user)) {
       user = this.authRepository.create({
-        id: userData.uniqueId,
-        name: userData.name,
-        accessLevel: userData.accessLevel,
-        profileImage: userData.profileImage,
+        id: result.data.data.uniqueId,
+        name: result.data.data.name,
+        accessLevel: result.data.data.accessLevel,
+        profileImage: result.data.data.profileImage,
       });
       await this.authRepository.save(user);
     }
 
     const token: string = await this.tokenService.generateAccessToken(
-      userData.uniqueId,
+      result.data.data.uniqueId,
     );
     const refreshToken: string = await this.tokenService.generateRefreshToken(
-      userData.uniqueId,
+      result.data.data.uniqueId,
     );
     if (validationData(token) || validationData(refreshToken)) {
       throw new ForbiddenException('토큰이 발급되지 않았습니다');

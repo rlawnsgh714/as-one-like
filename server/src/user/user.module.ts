@@ -10,7 +10,7 @@ import { UserService } from './user.service';
   imports: [
     TypeOrmModule.forFeature([UserRepository]),
     TokenModule,
-    forwardRef(() => AuthModule),
+    AuthModule,
   ],
   controllers: [UserController],
   providers: [UserService],

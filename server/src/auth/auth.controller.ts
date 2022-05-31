@@ -4,6 +4,7 @@ import response from 'src/global/response/response';
 import User from 'src/user/entity/user.entity';
 import { AuthService } from './auth.service';
 import CodeLogin from './dto/codeLogin';
+import { ILoginData } from './interface/loginData';
 
 @Controller('/auth')
 export class AuthController {
@@ -13,8 +14,8 @@ export class AuthController {
   async getCodeLogin(
     @Body() codeLogin: CodeLogin,
   ): Promise<BaseResponse<User>> {
-    const code = await this.authService.getCodeLogin(codeLogin);
-    const user = await this.authService.dodamLogin(code);
-    return response.successResponse('', user);
+    const code: string = await this.authService.getCodeLogin(codeLogin);
+    const userData: ILoginData = await this.authService.dodamLogin(code);
+    return response.successResponse('Dauth 로그인 성공', userData);
   }
 }
