@@ -40,7 +40,7 @@ export class TokenService {
 
     const Options: JwtSignOptions = {
       expiresIn: '100d',
-      issuer: 'lectural',
+      issuer: 'blog',
       subject: 'accessToken',
     };
 
@@ -54,7 +54,7 @@ export class TokenService {
 
     const Options: JwtSignOptions = {
       expiresIn: '5d',
-      issuer: 'lectural',
+      issuer: 'blog',
       subject: 'refreshToken',
     };
 
@@ -64,7 +64,7 @@ export class TokenService {
   remakeAccessToken(token: string): string[] {
     const { iss, uniqueId, sub }: IToken = this.verifyToken(token);
 
-    if (iss !== 'lectural' || sub !== 'refreshToken') {
+    if (iss !== 'blog' || sub !== 'refreshToken') {
       throw new BadRequestException('위조된 토큰');
     }
 
