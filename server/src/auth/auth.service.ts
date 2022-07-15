@@ -1,6 +1,8 @@
 import {
+  BadRequestException,
   ForbiddenException,
   Injectable,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -37,17 +39,28 @@ export class AuthService {
     const redirectUrl: string = await this.configService.get<string>(
       'redirectUrl',
     );
-    const res: AxiosResponse = await axios.post(
-      `http://${DAUTH_SERVER}/api/auth/login`,
-      {
-        id: codeLogin.id,
-        pw: codeLogin.pw,
-        clientId: clientId,
-        redirectUrl: redirectUrl,
-      },
-    );
-    const code: string = res.data.data.location.split('=')[1].split('&')[0];
-    return code;
+    try {
+      const res: AxiosResponse = await axios.post(
+        `http://${DAUTH_SERVER}/api/auth/login`,
+        {
+          id: codeLogin.id,
+          pw: codeLogin.pw,
+          clientId: clientId,
+          redirectUrl: redirectUrl,
+        },
+      );
+      const code: string = res.data.data.location.split('=')[1].split('&')[0];
+      return code;
+    } catch (error) {
+      switch (error.status) {
+        case 400:
+          throw new BadRequestException('Bad request');
+        case 401:
+          throw new UnauthorizedException('Unauthorization');
+        case 404:
+          throw new NotFoundException('NotFound');
+      }
+    }
   }
 
   async dodamLogin(code: string): Promise<ILoginData> {
